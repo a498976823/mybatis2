@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>员工列表</title>
+<link href="css/bootstrap.min.css" type="text/css" rel="stylesheet">
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript">
+	$(function(){
+		var app = new Vue({
+			el:'.container',
+			data:{
+				depts:[],
+				person:{
+					deptid:0,
+					sex:''
+				},
+				persons:[]
+			},
+			methods:{
+				dialog:function(){
+					$('#dialog').modal('show');	
+				},
+				getdepts:function(){
+					let that = this;
+					$.getJSON("/telement/dept/query",function(res){
+						that.depts = res
+					})
+				},
+				query:function(){
+					let that = this;
+					$.getJSON("/telement/person/selectAll",that.person,function(res){
+						that.persons = res
+					})
+				}
+			}
+		})
+		app.getdepts();
+	})
+</script>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3">
+				<select v-model="person.deptid" class="form-control">
+					<option value="0">选择部门</option>
+					<option v-for="d in depts "  :value="d.id">{{d.name}}</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<input v-model="person.name" class="form-control" placeholder="姓名">
+			</div>
+			<div class="col-md-2">
+				<select v-model="person.sex" class="form-control">
+					<option value="">性别</option>
+					<option>男</option>
+					<option>女</option>
+				</select>
+			</div>
+			<div class="col-md-3">
+				<input v-model="person.phone" class="form-control" placeholder="电话号码">
+			</div>
+			<div class="col-md-1">
+				<button @click="dialog()" class="btn btn-primary btn-block">添加</button>
+			</div>
+			<div class="col-md-1">
+				<button @click="query()" class="btn btn-primary btn-block">查询</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-bordered table-striped table-hover">
+					<tr>
+						<th>序号</th>
+						<th>姓名</th>
+						<th>部门</th>
+						
+						<th>生日</th>
+						<th>电话</th>
+						
+					</tr>
+					<tr v-for="(p,i) in persons">
+						<td>{{i+1}}</td>
+						<td>{{p.name}}</td>
+						<td>{{p.dname}}</td>						
+						<td>{{p.birthday}}</td>
+						<td>{{p.phone}}</td>
+						
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	
+<div id="dialog" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">编辑员工信息</h4>
+      </div>
+      <div class="modal-body">
+      		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary">保存</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	
+</body>
+</html>

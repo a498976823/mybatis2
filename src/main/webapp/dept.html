@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>部门增删改查</title>
+<link href="css/bootstrap.min.css" type="text/css" rel="stylesheet">
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+ <script type="text/javascript">
+ 
+ 	$(function(){
+ 		
+ 		 var app = new Vue({
+ 			 
+ 			 el:'.container',
+ 			 data:{
+ 				 depts:[],
+ 				 beans:{
+ 					 id:'',
+ 					 name:''
+ 				 }
+ 				 
+ 			 },
+ 		 	methods:{
+ 		 		
+ 		 		getDept:function(){
+ 		 			let that = this;
+ 		 			
+ 		 			$.getJSON("/telement/dept/query",function(res){
+ 		 				
+ 		 				
+ 		 				
+ 		 					that.depts=res;
+ 		 				
+ 		 			})
+ 			
+ 		 		},
+ 		 		remove:function(id){
+ 		 			
+ 		 			let that = this;
+ 		 			
+ 		 			$.ajax({
+ 		 				type:"get",
+ 		 				url:"/telement/dept/remove?id="+id,
+ 		 				success:function(res){
+ 		 					
+ 		 					if(res){
+ 		 						that.getDept();
+ 		 					}
+ 		 					
+ 		 				}
+ 		 				
+ 		 			})
+ 					},
+ 					change:function(name,id){
+ 						
+ 						$("#inputname").val(name);
+ 						$("#inputid").val(id);
+ 						
+ 					},
+ 					save:function(){
+ 						let that =this;
+ 						that.beans.id=$("#inputid").val();
+ 						that.beans.name=$("#inputname").val()
+ 						if(that.beans.id>0){
+ 							
+ 						$.ajax({
+ 							type:"get",
+ 							url:"/telement/dept/update?id="+that.beans.id+"&name="+that.beans.name,
+ 							success:function(res){
+ 								if(res){
+ 									$("#inputid").val('');
+ 									$("#inputname").val('');
+ 									that.beans.id='';
+	 									that.beans.name='';
+ 									that.getDept();
+ 									
+ 									
+ 								} 								
+ 							}
+ 							
+ 							
+ 						})}else{
+ 							$.ajax({
+ 	 							type:"get",
+ 	 							url:"/telement/dept/insert?id="+that.beans.id+"&name="+that.beans.name,
+ 	 							success:function(res){
+ 	 								if(res){
+ 	 									$("#inputid").val('');
+ 	 									$("#inputname").val('');
+ 	 									that.beans.id='';
+ 	 									that.beans.name='';
+ 	 									that.getDept();
+ 	 									
+ 	 									
+ 	 								} 								
+ 	 							}
+ 	 							
+ 	 							
+ 	 						})
+ 							
+ 							
+ 							
+ 						}
+ 						
+ 					}
+ 		 		
+ 		 		
+ 		 		
+ 		 	}
+ 			 
+ 			 
+ 			 
+ 		 })
+ 		
+ 		
+ 		
+ 		app.getDept();
+ 	})
+ 
+ 
+ </script>
+		
+		<div class="container">
+				
+				<div class="row">
+				<input type="hidden" id="inputid">					
+					<input v-model="beans.name" @keyup.enter="save()"   id="inputname" style="margin-top: 10px;" class="col-md-8"  type="text" placeholder="请输入名称">
+					 <button @click="save()" style="margin-top: 8px;"   class="btn  btn-primary col-md-2">保存</button>
+				</div>
+				<div class="row">
+					<table style="text-align: center;" border="1" class="table tab-bordered tab-striped table-hover">
+							<tr>
+								<th>序号</th>
+								<th>姓名</th>
+								<th>编辑</th>
+								<th>删除</th>
+								
+							</tr>
+							
+							<tr  v-for="(d,i) in depts">
+									<td>{{i+1}}</td>
+									<td>{{d.name}}</td>
+									<td><a @click="change(d.name,d.id)"  href="#">编辑</a></td>
+									<td><a  @click="remove(d.id)"  href="#">删除</a></td>
+									
+							
+							</tr>
+					
+					</table>
+				
+				
+				
+				</div>	
+		
+		
+		</div>
+		
+
+</body>
+</html>
